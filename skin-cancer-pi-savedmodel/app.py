@@ -78,9 +78,17 @@ disease_info = {
 # ====== [LOAD MODEL] ======
 @st.cache_resource
 def load_model():
-    # Coba memuat model dari format .keras
     try:
-        return tf.keras.models.load_model("trained_model.h5", compile=False)
+        zip_path = "saved_model.zip"
+        extract_path = "saved_model_dir"
+
+        # Ekstrak hanya jika belum ada
+        if not os.path.exists(extract_path):
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(extract_path)
+
+        # Load model dari folder hasil ekstrak
+        return tf.keras.models.load_model(extract_path, compile=False)
     except Exception as e:
         st.error(f"Error loading model: {e}")
         return None
